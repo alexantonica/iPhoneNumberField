@@ -217,6 +217,8 @@ public struct iPhoneNumberField: UIViewRepresentable {
                     displayedText: $displayedText,
                     isFirstResponder: externalIsFirstResponder ?? $internalIsFirstResponder,
                     formatted: formatted,
+                    code: $code,
+                    number: $number,
                     onBeginEditing: onBeginEditingHandler,
                     onEditingChange: onEditingChangeHandler,
                     onPhoneNumberChange: onPhoneNumberChangeHandler,
@@ -231,6 +233,8 @@ public struct iPhoneNumberField: UIViewRepresentable {
             displayedText: Binding<String>,
             isFirstResponder: Binding<Bool>,
             formatted: Bool,
+            code: Binding<String>,
+            number: Binding<String>,
             onBeginEditing: @escaping (PhoneNumberTextField) -> () = { (view: PhoneNumberTextField) in },
             onEditingChange: @escaping (PhoneNumberTextField) -> () = { (view: PhoneNumberTextField) in },
             onPhoneNumberChange: @escaping (PhoneNumber?) -> () = { (view: PhoneNumber?) in },
@@ -248,13 +252,16 @@ public struct iPhoneNumberField: UIViewRepresentable {
             self.onEndEditing = onEndEditing
             self.onClear = onClear
             self.onReturn = onReturn
+            self.code = code
+            self.number = number
         }
 
         var text: Binding<String>
         var displayedText: Binding<String>
         var isFirstResponder: Binding<Bool>
         var formatted: Bool
-
+        var code: Binding<String>
+        var number: Binding<String>
         var onBeginEditing = { (view: PhoneNumberTextField) in }
         var onEditingChange = { (view: PhoneNumberTextField) in }
         var onPhoneNumberChange = { (phoneNumber: PhoneNumber?) in }
@@ -262,6 +269,7 @@ public struct iPhoneNumberField: UIViewRepresentable {
         var onClear = { (view: PhoneNumberTextField) in }
         var onReturn = { (view: PhoneNumberTextField) in }
 
+        
         @objc public func textViewDidChange(_ textField: UITextField) {
             guard let textField = textField as? PhoneNumberTextField else {
                 return assertionFailure("Undefined state")
@@ -277,8 +285,8 @@ public struct iPhoneNumberField: UIViewRepresentable {
                     let country = String(number.countryCode)
                     let nationalNumber = String(number.nationalNumber)
                     text.wrappedValue = "+" + country + nationalNumber
-                    code.wrappedValue = country
-                    number.wrappedValue = number
+                    self.code.wrappedValue = country
+                    self.number.wrappedValue = nationalNumber
                 } else {
                     // Otherwise, maintain an empty string
                     text.wrappedValue = ""
